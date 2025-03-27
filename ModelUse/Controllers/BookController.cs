@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using ModelUse.Models;
-using ModelUse.Services;
+using MediatR;
+using ModelUse.Schema;
+using ModelUse.Implementation.Cqrs;
 
 
 namespace ModelUse.Controllers;
@@ -11,71 +12,49 @@ namespace ModelUse.Controllers;
 public class BookController : ControllerBase
 {
 
-    private readonly IBookService _bookService;
-
-    public BookController(IBookService bookService)
+    private readonly IMediator mediator;
+    public BookController(IMediator mediator)
     {
-        _bookService = bookService;
-    }
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Book>>>  GetBooks()
-    {   
-        var books = await _bookService.GetAll();
-        return Ok(books);
+        this.mediator = mediator;
     }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Book>> GetBookById(int id)
+    [HttpGet("GetAll")]
+    public async Task<ApiResponse<List<BookResponse>>> GetAllBooks()
     {
-        var book = await _bookService.GetById(id);
-        if (book == null)
-            return NotFound(new { message = "Book not found" });
-
-        return Ok(book);
-        
+        var operation = new GetAllBooksQuery();
+        var result = await mediator.Send(operation);
+        return result;
+    }
+    
+    [HttpGet("GetById/{id}")]
+    public async Task<ApiResponse<BookResponse>> GetBookById([FromRoute] int id)
+    {
+        var operation = new GetBookByIdQuery(id);
+        var result = await mediator.Send(operation);
+        return result;
     }
 
-    [HttpPost]
-    public async Task<ActionResult<Book>>  AddBook([FromBody] Book newBook)
+     [HttpPost]
+    public async Task<ApiResponse<BookResponse>> AddBook([FromBody] BookRequest book)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-        
-        await _bookService.Add(newBook);
-        return Ok(newBook);
+        var operation = new CreateBookCommand(book);
+        var result = await mediator.Send(operation);
+        return result;
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateBook(int id, [FromBody] Book updatedBook)
+
+     [HttpPut("{id}")]
+    public async Task<ApiResponse> UpdateBook([FromRoute] int id, [FromBody] BookRequest book)
     {
-        
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
-
-        var existingBook = await _bookService.GetById(id); 
-        if (existingBook == null)
-            return NotFound(new { message = "Book not found" });
-
-        
-        existingBook.Title = updatedBook.Title;
-        existingBook.Author = updatedBook.Author;
-        existingBook.Price = updatedBook.Price;
-        
-        await _bookService.Update(existingBook); 
-
-        return NoContent();
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteBook(int id)
+        var operation = new UpdateBookCommand(id,book);
+        var result = await mediator.Send(operation);
+        return result;
+    }[HttpDelete("{id}")]
+    public async Task<ApiResponse> DeleteBook([FromRoute] int id)
     {
-        var book =await _bookService.GetById(id);
-        if (book == null)
-            return NotFound(new { message = "Book not found" });
-
-        await _bookService.Delete(id);
-        return NoContent();
+        var operation = new DeleteBookCommand(id);
+        var result = await mediator.Send(operation);
+        return result;
     }
 }
 
