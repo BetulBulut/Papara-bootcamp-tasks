@@ -4,6 +4,8 @@ using MediatR;
 using ModelUse.Data;
 using ModelUse.Implementation.Cqrs;
 using System.Reflection;
+using FluentValidation.AspNetCore;
+using ModelUse.Implementation.Validation;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -13,9 +15,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-
-
+builder.Services.AddControllers().AddFluentValidation(x =>
+{
+    x.RegisterValidatorsFromAssemblyContaining<BookRequestValidator>();
+});
 builder.Services.AddMediatR(x=> x.RegisterServicesFromAssemblies(typeof(CreateBookCommand).GetTypeInfo().Assembly));
 
 var app = builder.Build();
