@@ -13,7 +13,6 @@ public class Book
     public decimal Price { get; set; }
 
     public int GenreId { get; set; }
-    public Genre Genre { get; set; } 
 }
 
 public class BookConfiguration : IEntityTypeConfiguration<Book>
@@ -29,9 +28,6 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
         builder.Property(b => b.PublishedDate).IsRequired(true);
         builder.Property(b => b.Price).IsRequired(true);
         builder.Property(b => b.GenreId).IsRequired(true);
-        builder.HasOne(b => b.Genre)
-            .WithMany(g => g.Books)
-            .HasForeignKey(b => b.GenreId)
-            .OnDelete(DeleteBehavior.Cascade);
+
     }
 }
