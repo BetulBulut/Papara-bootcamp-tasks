@@ -1,12 +1,7 @@
-using System.Linq;
-using Microsoft.AspNetCore.Mvc;
 using BookStore.Data;
-using BookStore.Models;
-using System.Collections.Generic;
-using BookStore.Common;
 using AutoMapper;
 
-namespace BookStore.BookOperations;
+namespace BookStore.Application.BookOperations.Query.GetBooks;
 
 public class GetBooksQuery
 {

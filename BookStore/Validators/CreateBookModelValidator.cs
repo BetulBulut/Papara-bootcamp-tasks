@@ -1,5 +1,5 @@
+using BookStore.Application.BookOperations.Command.CreateBook;
 using FluentValidation;
-using BookStore.BookOperations;
 
 public class CreateBookModelValidator : AbstractValidator<CreateBookModel>
 {

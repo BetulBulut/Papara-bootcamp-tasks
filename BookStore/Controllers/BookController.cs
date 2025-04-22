@@ -1,6 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using BookStore.Data;
-using BookStore.BookOperations;
+using BookStore.Application.BookOperations.Command;
+using BookStore.Application.BookOperations.Query;
+using BookStore.Application.BookOperations.Query.GetBooks;
+using BookStore.Application.BookOperations.Query.GetBookDetail;
+using BookStore.Application.BookOperations.Command.CreateBook;
+using BookStore.Application.BookOperations.Command.UpdateBook;
+using BookStore.Application.BookOperations.Command.DeleteBook;
+using AutoMapper;
 
 namespace BookStore.Controllers;
 
@@ -9,16 +16,18 @@ namespace BookStore.Controllers;
 public class BookController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly IMapper _mapper;
 
-    public BookController(AppDbContext context)
+    public BookController(AppDbContext context, IMapper mapper)
     {
+        _mapper = mapper;
         _context = context;
     }
-
+   
     [HttpGet]
     public IActionResult GetBooks()
     {
-        GetBooksQuery query = new GetBooksQuery(_context);
+        GetBooksQuery query = new GetBooksQuery(_context, _mapper);
         var result = query.Handle();
         return Ok(result);
     }
@@ -26,7 +35,7 @@ public class BookController : ControllerBase
     [HttpGet("{id}")]
     public IActionResult GetBookDetail(int id)
     {
-        GetBookDetailQuery query = new GetBookDetailQuery(_context);
+        GetBookDetailQuery query = new GetBookDetailQuery(_context, _mapper);
         query.BookId = id;
 
         try
@@ -43,7 +52,7 @@ public class BookController : ControllerBase
     [HttpPost]
     public IActionResult AddBook([FromBody] CreateBookModel newBook)
     {
-        CreateBookCommand command = new CreateBookCommand(_context);
+        CreateBookCommand command = new CreateBookCommand(_context, _mapper);
         command.Model = newBook;
 
         try
@@ -60,7 +69,7 @@ public class BookController : ControllerBase
     [HttpPut("{id}")]
     public IActionResult UpdateBook(int id, [FromBody] UpdateBookModel updatedBook)
     {
-        UpdateBookCommand command = new UpdateBookCommand(_context);
+        UpdateBookCommand command = new UpdateBookCommand(_context, _mapper);
         command.BookId = id;
         command.UpdatedBook = updatedBook;
 

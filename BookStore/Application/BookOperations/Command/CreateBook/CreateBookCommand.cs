@@ -1,9 +1,8 @@
 using BookStore.Data;
 using BookStore.Models;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using AutoMapper;
 
-namespace BookStore.BookOperations;
+namespace BookStore.Application.BookOperations.Command.CreateBook;
 
 public class CreateBookCommand
 {

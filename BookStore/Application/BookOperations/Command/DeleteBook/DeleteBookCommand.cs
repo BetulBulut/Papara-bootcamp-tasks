@@ -1,8 +1,6 @@
-using System;
-using System.Linq;
 using BookStore.Data;
 
-namespace BookStore.BookOperations;
+namespace BookStore.Application.BookOperations.Command.DeleteBook;
 
 public class DeleteBookCommand
 {
@@ -20,7 +18,9 @@ public class DeleteBookCommand
         if (book == null)
             throw new InvalidOperationException("Book not found.");
 
-        _context.Books.Remove(book);
+        if (book.IsActive == false)
+            throw new InvalidOperationException("Book is already inactive.");
+        book.IsActive = false; 
         _context.SaveChanges();
     }
 }
