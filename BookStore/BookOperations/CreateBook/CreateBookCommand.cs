@@ -1,7 +1,7 @@
-
 using BookStore.Data;
 using BookStore.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using AutoMapper;
 
 namespace BookStore.BookOperations;
 
@@ -9,10 +9,12 @@ public class CreateBookCommand
 {
     public CreateBookModel Model { get; set; }
     private readonly AppDbContext _dbContext;
+    private readonly IMapper _mapper;
 
-    public CreateBookCommand(AppDbContext dbContext)
+    public CreateBookCommand(AppDbContext dbContext, IMapper mapper)
     {
         _dbContext = dbContext;
+        _mapper = mapper;
     }
 
     public void Handle()
@@ -21,16 +23,7 @@ public class CreateBookCommand
         if (book is not null)
             throw new InvalidOperationException("Book already exists.");
 
-        book = new Book
-        {
-            Title = Model.Title,
-            GenreId = Model.GenreId,
-            PublishedDate = Model.PublishedDate,
-            Author = Model.Author,
-            ISBN = Model.ISBN,
-            Price = Model.Price
-        };
-
+        book = _mapper.Map<Book>(Model); // Use AutoMapper to map CreateBookModel to Book
         _dbContext.Books.Add(book);
         _dbContext.SaveChanges();
     }

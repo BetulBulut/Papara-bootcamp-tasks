@@ -1,16 +1,19 @@
 using BookStore.Data;
+using AutoMapper;
 
 namespace BookStore.BookOperations;
 
 public class UpdateBookCommand
 {
     private readonly AppDbContext _context;
+    private readonly IMapper _mapper;
     public int BookId { get; set; }
     public UpdateBookModel UpdatedBook { get; set; }
 
-    public UpdateBookCommand(AppDbContext context)
+    public UpdateBookCommand(AppDbContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
 
     public void Handle()
@@ -19,10 +22,7 @@ public class UpdateBookCommand
         if (book == null)
             throw new InvalidOperationException("Book not found.");
 
-        book.GenreId = UpdatedBook.GenreId != default ? UpdatedBook.GenreId : book.GenreId;
-        book.Title = UpdatedBook.Title != default ? UpdatedBook.Title : book.Title;
-        book.Price = UpdatedBook.Price != default ? UpdatedBook.Price : book.Price;
-
+        _mapper.Map(UpdatedBook, book); // Use AutoMapper to map UpdatedBook to the existing Book entity
         _context.SaveChanges();
     }
 }

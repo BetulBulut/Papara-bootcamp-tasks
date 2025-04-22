@@ -1,34 +1,29 @@
-
 using BookStore.Common;
 using BookStore.Data;
+using AutoMapper;
 
 namespace BookStore.BookOperations;
 
 public class GetBookDetailQuery
 {
     private readonly AppDbContext _dbContext;
+    private readonly IMapper _mapper;
     public int BookId { get; set; }
 
-    public GetBookDetailQuery(AppDbContext dbContext)
+    public GetBookDetailQuery(AppDbContext dbContext, IMapper mapper)
     {
         _dbContext = dbContext;
+        _mapper = mapper;
     }
 
     public BookDetailViewModel Handle()
     {
-        var book = _dbContext.Books.Where(book => book.Id == BookId).SingleOrDefault();
+        var book = _dbContext.Books.SingleOrDefault(book => book.Id == BookId);
         if (book is null)
             throw new InvalidOperationException("Book not found.");
 
-        return new BookDetailViewModel
-        {
-            Title = book.Title,
-            Genre = ((GenreEnum)book.GenreId).ToString(),
-            PublishedDate = book.PublishedDate.ToString("dd/MM/yyyy"),
-            Author = book.Author,
-            ISBN = book.ISBN,
-            Price = book.Price
-        };
+        var result = _mapper.Map<BookDetailViewModel>(book); // Use AutoMapper to map Book to BookDetailViewModel
+        return result;
     }
 }
 

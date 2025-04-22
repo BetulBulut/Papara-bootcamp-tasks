@@ -4,33 +4,26 @@ using BookStore.Data;
 using BookStore.Models;
 using System.Collections.Generic;
 using BookStore.Common;
+using AutoMapper;
 
 namespace BookStore.BookOperations;
 
 public class GetBooksQuery
 {
     private readonly AppDbContext _dbContext;
+    private readonly IMapper _mapper;
 
-    public GetBooksQuery(AppDbContext dbContext)
+    public GetBooksQuery(AppDbContext dbContext, IMapper mapper)
     {
         _dbContext = dbContext;
+        _mapper = mapper;
     }
 
     public List<BooksViewModel> Handle()
     {
         var bookList = _dbContext.Books.OrderBy(x => x.Id).ToList();
-        List<BooksViewModel> vm = new List<BooksViewModel>();
-
-        foreach (var book in bookList)
-        {
-            vm.Add(new BooksViewModel()
-            {
-                Title = book.Title,
-                PublishedDate = book.PublishedDate.Date.ToString("dd/MM/yyyy"),
-                Genre = ((GenreEnum)book.GenreId).ToString(),
-            });
-        }
-        return vm;
+        var result = _mapper.Map<List<BooksViewModel>>(bookList); // Use AutoMapper to map Book to BooksViewModel
+        return result;
     }
 
 }
