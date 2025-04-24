@@ -6,11 +6,13 @@ public class UpdateGenreModelValidator : AbstractValidator<UpdateGenreModel>
     public UpdateGenreModelValidator()
     {
         RuleFor(x => x.Name)
-            .MaximumLength(50).WithMessage("Genre name cannot exceed 50 characters.")
-            .When(x => !string.IsNullOrEmpty(x.Name)); // Sadece Name doluysa kontrol et
+            .NotEmpty().WithMessage("Genre name must not be empty.")
+            .MinimumLength(2).WithMessage("Genre name must be at least 2 characters long.")
+            .MaximumLength(50).WithMessage("Genre name cannot exceed 50 characters.");
 
         RuleFor(x => x.Description)
-            .MaximumLength(250).WithMessage("Genre description cannot exceed 250 characters.")
-            .When(x => !string.IsNullOrEmpty(x.Description)); // Sadece Description doluysa kontrol et
+            .NotEmpty().WithMessage("Genre description must not be empty.")
+            .MinimumLength(3).WithMessage("Genre description must be at least 3 characters long.")
+            .MaximumLength(250).WithMessage("Genre description cannot exceed 250 characters.");
     }
 }

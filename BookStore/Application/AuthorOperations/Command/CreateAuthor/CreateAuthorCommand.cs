@@ -23,6 +23,7 @@ public class CreateAuthorCommand
             throw new InvalidOperationException("Author already exists.");
 
         Author = _mapper.Map<Author>(Model);
+        Author.IsActive = true;
         _dbContext.Authors.Add(Author);
         _dbContext.SaveChanges();
     }

@@ -23,6 +23,7 @@ public class CreateGenreCommand
             throw new InvalidOperationException("Genre already exists.");
 
         Genre = _mapper.Map<Genre>(Model);
+        Genre.IsActive = true; 
         _dbContext.Genres.Add(Genre);
         _dbContext.SaveChanges();
     }

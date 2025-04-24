@@ -22,7 +22,8 @@ public class CreateBookCommand
         if (book is not null)
             throw new InvalidOperationException("Book already exists.");
 
-        book = _mapper.Map<Book>(Model); // Use AutoMapper to map CreateBookModel to Book
+        book = _mapper.Map<Book>(Model);
+        book.IsActive = true; 
         _dbContext.Books.Add(book);
         _dbContext.SaveChanges();
     }
@@ -33,7 +34,7 @@ public class CreateBookModel
     public string Title { get; set; }
     public int GenreId { get; set; }
     public DateTime PublishedDate { get; set; }
-    public string Author { get; set; }
+    public int AuthorId { get; set; }
     public string ISBN { get; set; }
     public int Price { get; set; }
 }

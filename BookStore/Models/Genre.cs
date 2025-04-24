@@ -8,7 +8,7 @@ public class Genre
     public int Id { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
-    public bool IsActive { get; set; } = true;
+    public bool IsActive { get; set; } 
     public List<Book> Books { get; set; } = new List<Book>();
 }
 public class GenreConfiguration : IEntityTypeConfiguration<Genre>

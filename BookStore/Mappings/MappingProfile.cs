@@ -1,7 +1,9 @@
 using AutoMapper;
+using BookStore.Application.AuthorOperations.Command;
 using BookStore.Application.AuthorOperations.Command.CreateAuthor;
 using BookStore.Application.AuthorOperations.Query;
 using BookStore.Application.BookOperations.Command.CreateBook;
+using BookStore.Application.BookOperations.Command.UpdateBook;
 using BookStore.Application.BookOperations.Query.GetBookDetail;
 using BookStore.Application.BookOperations.Query.GetBooks;
 using BookStore.Application.GenreOperations.Command;
@@ -15,8 +17,7 @@ public class MappingProfile : Profile
     {
         // Map CreateBookModel to Book
         CreateMap<CreateBookModel, Book>();
-
-        // Map Book to BookDetailViewModel
+        CreateMap<UpdateBookModel, Book>();
         CreateMap<Book, BookDetailViewModel>()
             .ForMember(dest => dest.PublishedDate, opt => opt.MapFrom(src => src.PublishedDate.ToString("dd/MM/yyyy")));
 
@@ -25,6 +26,7 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.PublishedDate, opt => opt.MapFrom(src => src.PublishedDate.ToString("dd/MM/yyyy")));
 
         CreateMap<CreateGenreModel, Genre>();
+        CreateMap<UpdateGenreModel, Genre>();
         CreateMap<Genre, GenresViewModel>();
 
         CreateMap<Genre, GenreDetailViewModel>()
@@ -39,8 +41,8 @@ public class MappingProfile : Profile
             })));
 
         CreateMap<CreateAuthorModel, Author>();
-        CreateMap<Author, AuthorsViewModel>()
-            .ForMember(dest => dest.BirthDate, opt => opt.MapFrom(src => src.BirthDate.ToString("dd/MM/yyyy")));
+        CreateMap<UpdateAuthorModel, Author>();
+        CreateMap<Author, AuthorsViewModel>();
         CreateMap<Author, AuthorDetailViewModel>()
             .ForMember(dest => dest.Books, opt => opt.MapFrom(src => src.Books.Select(book => new BookDetailViewModel
             {
