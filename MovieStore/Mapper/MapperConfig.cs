@@ -17,7 +17,7 @@ public class MapperConfig : Profile
 
         CreateMap<MovieRequest, Movie>();
         CreateMap<Movie, MovieResponse>();
-
+        
         CreateMap<DirectorRequest, Director>();
         CreateMap<Director, DirectorResponse>();
 

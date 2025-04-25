@@ -23,6 +23,7 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
         builder.Property(b => b.FirstName).IsRequired(true).HasMaxLength(50);
         builder.Property(b => b.LastName).IsRequired(true).HasMaxLength(50);
         builder.Property(b => b.Username).IsRequired(true).HasMaxLength(50);
+        builder.HasIndex(b => b.Username).IsUnique();
         builder.Property(b => b.PasswordHash).IsRequired(true).HasMaxLength(100);
     }
 }

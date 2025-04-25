@@ -10,7 +10,8 @@ namespace MovieStore.Implementation.Query;
 
 public class CustomerQueryHandler :
 IRequestHandler<GetAllCustomersQuery, ApiResponse<List<CustomerResponse>>>,
-IRequestHandler<GetCustomerByIdQuery, ApiResponse<CustomerResponse>>
+IRequestHandler<GetCustomerByIdQuery, ApiResponse<CustomerResponse>>,
+IRequestHandler<GetOrdersByCustomerIdQuery, ApiResponse<List<OrderResponse>>>
 {
     private readonly AppDbContext context;
     private readonly IMapper mapper;
@@ -44,4 +45,15 @@ IRequestHandler<GetCustomerByIdQuery, ApiResponse<CustomerResponse>>
         return new ApiResponse<CustomerResponse>(mapped);
     }
 
+    public async Task<ApiResponse<List<OrderResponse>>> Handle(GetOrdersByCustomerIdQuery request, CancellationToken cancellationToken)
+    {
+        var customer = await context.Customers.Include(x => x.Orders).FirstOrDefaultAsync(x => x.Id == request.Id && x.IsActive==true, cancellationToken);
+        if (customer == null)
+        {
+            return new ApiResponse<List<OrderResponse>>("Customer not found");
+        }
+
+        var mapped = mapper.Map<List<OrderResponse>>(customer.Orders);
+        return new ApiResponse<List<OrderResponse>>(mapped);
+    }
 }
