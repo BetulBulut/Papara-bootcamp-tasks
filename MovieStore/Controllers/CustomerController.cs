@@ -43,13 +43,6 @@ public class CustomersController : ControllerBase
         return result;
     }
 
-    [HttpPut("{id}")]
-    public async Task<ApiResponse> Put([FromRoute] int id, [FromBody] CustomerRequest customer)
-    {
-        var operation = new UpdateCustomerCommand(id, customer);
-        var result = await mediator.Send(operation);
-        return result;
-    }
     [HttpDelete("{id}")]
     public async Task<ApiResponse> Delete([FromRoute] int id)
     {
@@ -59,5 +52,7 @@ public class CustomersController : ControllerBase
     }
 
     //favorite genre ve orders ekle
+
+    //orders listele
 
 }

@@ -11,7 +11,6 @@ namespace MovieStore.Implementation.Command;
 
 public class CustomerCommandHandler :
 IRequestHandler<CreateCustomerCommand, ApiResponse<CustomerResponse>>,
-IRequestHandler<UpdateCustomerCommand,ApiResponse>,
 IRequestHandler<DeleteCustomerCommand,ApiResponse>
 {
     private readonly AppDbContext dbContext;
@@ -36,25 +35,10 @@ IRequestHandler<DeleteCustomerCommand,ApiResponse>
 
         await dbContext.SaveChangesAsync(cancellationToken);
         return new ApiResponse();
+        //diğer tablolarla ilişkisi bulunan kayıtlar silinemez.
     }
 
-    public async Task<ApiResponse> Handle(UpdateCustomerCommand request, CancellationToken cancellationToken)
-    {
-        var entity = await dbContext.Set<Customer>().FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
-        if (entity == null)
-            return new ApiResponse("Customer not found");
-
-        if (!entity.IsActive)
-            return new ApiResponse("Customer is not active");
-
-        entity.FirstName = request.customer.FirstName;
-        entity.LastName = request.customer.LastName;
-        entity.Username = request.customer.Username;
-
-        await dbContext.SaveChangesAsync(cancellationToken);
-        return new ApiResponse();
-    }
-
+    
     public async Task<ApiResponse<CustomerResponse>> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
     {
         var mapped = mapper.Map<Customer>(request.customer);

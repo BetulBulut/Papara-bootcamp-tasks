@@ -30,7 +30,7 @@ public class MovieConfiguration : IEntityTypeConfiguration<Movie>
         builder.HasOne(b => b.Director)
             .WithMany(b => b.DirectedMovies)
             .HasForeignKey(b => b.DirectorId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
         
         
     }
