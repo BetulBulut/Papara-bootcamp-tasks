@@ -34,7 +34,7 @@ IRequestHandler<GetDirectorByIdQuery, ApiResponse<DirectorResponse>>
 
     public async Task<ApiResponse<DirectorResponse>> Handle(GetDirectorByIdQuery request, CancellationToken cancellationToken)
     {
-        var Director = await context.Directors.Include(x => x.DirectedMovies).FirstOrDefaultAsync(x => x.Id == request.Id && x.IsActive==true, cancellationToken);
+        var Director = await context.Directors.FirstOrDefaultAsync(x => x.Id == request.Id && x.IsActive==true, cancellationToken);
         if (Director == null)
         {
             return new ApiResponse<DirectorResponse>("Director not found");

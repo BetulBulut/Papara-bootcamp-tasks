@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using MovieStore.Schema;
 using MovieStore.Implementation.Cqrs;
 using MovieStore.Models;
+using System.Security.Claims;
 
 namespace MovieStore.Controllers;
 
@@ -58,7 +59,7 @@ public class CustomersController : ControllerBase
         return result;
     }
 
-     [HttpGet]
+     [HttpGet("GetGenres")]
     public IActionResult GetGenres()
     {
         var genres = Enum.GetValues(typeof(GenreEnum))
@@ -77,10 +78,12 @@ public class CustomersController : ControllerBase
         return result;
     }
 
+    [Authorize(Roles = "Customer")]
     [HttpPost("BuyMovie")]
-    public async Task<ApiResponse<OrderResponse>> BuyMovie([FromBody] AddOrderCommand command)
-    {
-        var operation = new AddOrderCommand(command.CustomerId, command.MovieId);
+    public async Task<ApiResponse<OrderResponse>> BuyMovie(int movieId)
+    {   
+        var customerId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var operation = new AddOrderCommand(customerId,movieId);
         var result = await mediator.Send(operation);
         return result;
     }

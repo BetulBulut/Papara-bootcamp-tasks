@@ -25,7 +25,7 @@ IRequestHandler<DeleteDirectorCommand,ApiResponse>
 
     public async Task<ApiResponse> Handle(DeleteDirectorCommand request, CancellationToken cancellationToken)
     {
-        var entity = await context.Set<Director>().FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        var entity = await context.Directors.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
         if (entity == null)
             return new ApiResponse("Director not found");
 
@@ -43,7 +43,7 @@ IRequestHandler<DeleteDirectorCommand,ApiResponse>
     }
      public async Task<ApiResponse> Handle(UpdateDirectorCommand request, CancellationToken cancellationToken)
     {
-        var entity = await context.Set<Director>().FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        var entity = await context.Directors.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
         if (entity == null)
             return new ApiResponse("Director not found");
 
@@ -60,7 +60,7 @@ IRequestHandler<DeleteDirectorCommand,ApiResponse>
     public async Task<ApiResponse<DirectorResponse>> Handle(CreateDirectorCommand request, CancellationToken cancellationToken)
     {
         var mapped = mapper.Map<Director>(request.Director);
-        var existingDirector = await context.Set<Director>().FirstOrDefaultAsync(x => x.FirstName == mapped.FirstName && x.LastName == mapped.LastName, cancellationToken);
+        var existingDirector = await context.Directors.FirstOrDefaultAsync(x => x.FirstName == mapped.FirstName && x.LastName == mapped.LastName, cancellationToken);
         if (existingDirector != null)
             return new ApiResponse<DirectorResponse>("Director already exists");
         mapped.IsActive = true;

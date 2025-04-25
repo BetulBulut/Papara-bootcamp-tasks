@@ -25,7 +25,7 @@ IRequestHandler<DeleteActorCommand,ApiResponse>
 
     public async Task<ApiResponse> Handle(DeleteActorCommand request, CancellationToken cancellationToken)
     {
-        var entity = await context.Set<Actor>().FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        var entity = await context.Actors.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
         if (entity == null)
             return new ApiResponse("Actor not found");
 
@@ -43,7 +43,7 @@ IRequestHandler<DeleteActorCommand,ApiResponse>
     }
      public async Task<ApiResponse> Handle(UpdateActorCommand request, CancellationToken cancellationToken)
     {
-        var entity = await context.Set<Actor>().FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        var entity = await context.Actors.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
         if (entity == null)
             return new ApiResponse("Actor not found");
 
@@ -60,7 +60,7 @@ IRequestHandler<DeleteActorCommand,ApiResponse>
     public async Task<ApiResponse<ActorResponse>> Handle(CreateActorCommand request, CancellationToken cancellationToken)
     {
         var mapped = mapper.Map<Actor>(request.Actor);
-        var existingActor = await context.Set<Actor>().FirstOrDefaultAsync(x => x.FirstName == mapped.FirstName && x.LastName == mapped.LastName, cancellationToken);
+        var existingActor = await context.Actors.FirstOrDefaultAsync(x => x.FirstName == mapped.FirstName && x.LastName == mapped.LastName, cancellationToken);
         if (existingActor != null)
             return new ApiResponse<ActorResponse>("Actor already exists");
         mapped.IsActive = true;

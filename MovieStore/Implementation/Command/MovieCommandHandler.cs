@@ -25,7 +25,7 @@ IRequestHandler<UpdateMovieCommand, ApiResponse>
 
     public async Task<ApiResponse> Handle(DeleteMovieCommand request, CancellationToken cancellationToken)
     {
-        var entity = await context.Set<Movie>().FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        var entity = await context.Movies.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
         if (entity == null)
             return new ApiResponse("Movie not found");
 
@@ -46,10 +46,13 @@ IRequestHandler<UpdateMovieCommand, ApiResponse>
     public async Task<ApiResponse<MovieResponse>> Handle(CreateMovieCommand request, CancellationToken cancellationToken)
     {
         var mapped = mapper.Map<Movie>(request.Movie);
-        var existingMovie = await context.Set<Movie>().FirstOrDefaultAsync(x => x.Title == mapped.Title, cancellationToken);
+        var existingMovie = await context.Movies.FirstOrDefaultAsync(x => x.Title == mapped.Title, cancellationToken);
         if (existingMovie != null)
             return new ApiResponse<MovieResponse>("Movie already exists");
         mapped.IsActive = true;
+        mapped.DirectorId = request.Movie.DirectorId;
+        if (context.Directors.FirstOrDefault(x => x.Id == request.Movie.DirectorId) == null)
+            return new ApiResponse<MovieResponse>("Director not found");
 
         var entity = await context.AddAsync(mapped, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
@@ -60,7 +63,7 @@ IRequestHandler<UpdateMovieCommand, ApiResponse>
 
     public async Task<ApiResponse> Handle(UpdateMovieCommand request, CancellationToken cancellationToken)
     {
-        var entity = await context.Set<Movie>().FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        var entity = await context.Movies.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
         if (entity == null)
             return new ApiResponse("Movie not found");
 

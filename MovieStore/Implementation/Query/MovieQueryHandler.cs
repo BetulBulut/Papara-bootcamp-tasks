@@ -34,7 +34,7 @@ IRequestHandler<GetMovieByIdQuery, ApiResponse<MovieResponse>>
 
     public async Task<ApiResponse<MovieResponse>> Handle(GetMovieByIdQuery request, CancellationToken cancellationToken)
     {
-        var Movie = await context.Movies.Include(x => x.Actors).FirstOrDefaultAsync(x => x.Id == request.Id && x.IsActive==true, cancellationToken);
+        var Movie = await context.Movies.FirstOrDefaultAsync(x => x.Id == request.Id && x.IsActive==true, cancellationToken);
         if (Movie == null)
         {
             return new ApiResponse<MovieResponse>("Movie not found");

@@ -2,7 +2,7 @@ using MovieStore.Models;
 
 namespace MovieStore.Schema;
 
-public class AuthRequest : BaseRequest
+public class LoginRequest : BaseRequest
 {
     public string Username { get; set; }
     public string Password { get; set; }
@@ -10,12 +10,9 @@ public class AuthRequest : BaseRequest
     
 }
 
-public class AuthResponse : BaseResponse
+public class LoginResponse : BaseResponse
 {
     public string Token { get; set; }
+    public string UserName { get; set; }
     public DateTime Expiration { get; set; }
-    public string CustomerId { get; set; }
-    public string Username { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
 }

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Base.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -6,9 +7,13 @@ namespace MovieStore.Models;
 
 public class Director : BaseModel
 {
+    [Required, MaxLength(50)]
     public string FirstName { get; set; }
+
+    [Required, MaxLength(50)]
     public string LastName { get; set; }
-    public List<Movie> DirectedMovies { get; set; } 
+
+    public List<Movie> Movies { get; set; }
 }
 
 public class DirectorConfiguration : IEntityTypeConfiguration<Director>

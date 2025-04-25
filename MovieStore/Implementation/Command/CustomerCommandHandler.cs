@@ -2,6 +2,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using MovieStore.Data;
+using MovieStore.Helpers;
 using MovieStore.Implementation.Cqrs;
 using MovieStore.Models;
 using MovieStore.Schema;
@@ -26,7 +27,7 @@ IRequestHandler<AddOrderCommand, ApiResponse<OrderResponse>>
 
     public async Task<ApiResponse> Handle(DeleteCustomerCommand request, CancellationToken cancellationToken)
     {
-        var entity = await context.Set<Customer>().FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        var entity = await context.Customers.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
         if (entity == null)
             return new ApiResponse("Customer not found");
 
@@ -47,17 +48,16 @@ IRequestHandler<AddOrderCommand, ApiResponse<OrderResponse>>
     public async Task<ApiResponse<CustomerResponse>> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
     {
         var mapped = mapper.Map<Customer>(request.customer);
-        var existingCustomer = await context.Set<Customer>().FirstOrDefaultAsync(x => x.Username == mapped.Username, cancellationToken);
+        var existingCustomer = await context.Customers.FirstOrDefaultAsync(x => x.Username == mapped.Username, cancellationToken);
         if (existingCustomer != null)
             return new ApiResponse<CustomerResponse>("Customer already exists");
         mapped.IsActive = true;
-
-        //secret ve password üret
-
-        mapped.Secret="secret";
-        mapped.PasswordHash = "passwordHash";
         mapped.FavoriteGenres = new List<GenreEnum>(){GenreEnum.Action, GenreEnum.Comedy};
-        
+        mapped.Secret = PasswordGenerator.GeneratePassword(30);
+
+        var password = PasswordGenerator.GeneratePassword(6);
+        mapped.PasswordHash = PasswordGenerator.CreateMD5(password, mapped.Secret);
+        Console.WriteLine($"Generated password for {mapped.Username}: {password}");
 
         var entity = await context.AddAsync(mapped, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
@@ -68,7 +68,7 @@ IRequestHandler<AddOrderCommand, ApiResponse<OrderResponse>>
 
     public async Task<ApiResponse> Handle(CreateFavoriteGenreCommand request, CancellationToken cancellationToken)
     {
-        var customer = await context.Set<Customer>().FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        var customer = await context.Customers.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
         if (customer == null)
             return new ApiResponse("Customer not found");
 
@@ -85,13 +85,18 @@ IRequestHandler<AddOrderCommand, ApiResponse<OrderResponse>>
 
     public async Task<ApiResponse<OrderResponse>> Handle(AddOrderCommand request, CancellationToken cancellationToken)
     {
-        var customer = await context.Set<Customer>().FirstOrDefaultAsync(x => x.Id == request.CustomerId, cancellationToken);
+        var customer = await context.Customers.FirstOrDefaultAsync(x => x.Id == request.CustomerId, cancellationToken);
         if (customer == null)
             return new ApiResponse<OrderResponse>("Customer not found");
 
         if (!customer.IsActive)
             return new ApiResponse<OrderResponse>("Customer is not active");
 
+        var movie = await context.Movies.FirstOrDefaultAsync(x => x.Id == request.MovieId, cancellationToken);
+        if (movie == null)
+        {
+            return new ApiResponse<OrderResponse>("Movie not found");
+        }
         var order = new Order
         {
             MovieId = request.MovieId,

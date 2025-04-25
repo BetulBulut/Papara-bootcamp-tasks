@@ -34,7 +34,7 @@ IRequestHandler<GetActorByIdQuery, ApiResponse<ActorResponse>>
 
     public async Task<ApiResponse<ActorResponse>> Handle(GetActorByIdQuery request, CancellationToken cancellationToken)
     {
-        var Actor = await context.Actors.Include(x => x.ActedMovies).FirstOrDefaultAsync(x => x.Id == request.Id && x.IsActive==true, cancellationToken);
+        var Actor = await context.Actors.FirstOrDefaultAsync(x => x.Id == request.Id && x.IsActive==true, cancellationToken);
         if (Actor == null)
         {
             return new ApiResponse<ActorResponse>("Actor not found");

@@ -24,26 +24,26 @@ namespace MovieStore.Migrations
 
             modelBuilder.Entity("ActorMovie", b =>
                 {
-                    b.Property<long>("ActedMoviesId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("ActorsId")
+                        .HasColumnType("int");
 
-                    b.Property<long>("ActorsId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("MoviesId")
+                        .HasColumnType("int");
 
-                    b.HasKey("ActedMoviesId", "ActorsId");
+                    b.HasKey("ActorsId", "MoviesId");
 
-                    b.HasIndex("ActorsId");
+                    b.HasIndex("MoviesId");
 
                     b.ToTable("ActorMovie");
                 });
 
             modelBuilder.Entity("MovieStore.Models.Actor", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -71,11 +71,11 @@ namespace MovieStore.Migrations
 
             modelBuilder.Entity("MovieStore.Models.Customer", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.PrimitiveCollection<string>("FavoriteGenres")
                         .IsRequired()
@@ -83,7 +83,8 @@ namespace MovieStore.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("InsertedDate")
                         .HasColumnType("datetime2");
@@ -93,11 +94,13 @@ namespace MovieStore.Migrations
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Secret")
                         .IsRequired()
@@ -108,7 +111,8 @@ namespace MovieStore.Migrations
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -117,15 +121,16 @@ namespace MovieStore.Migrations
 
             modelBuilder.Entity("MovieStore.Models.Director", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("InsertedDate")
                         .HasColumnType("datetime2");
@@ -135,7 +140,8 @@ namespace MovieStore.Migrations
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -147,20 +153,14 @@ namespace MovieStore.Migrations
 
             modelBuilder.Entity("MovieStore.Models.Movie", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long?>("CustomerId")
-                        .HasColumnType("bigint");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("DirectorId")
                         .HasColumnType("int");
-
-                    b.Property<long>("DirectorId1")
-                        .HasColumnType("bigint");
 
                     b.Property<int>("Genre")
                         .HasColumnType("int");
@@ -186,26 +186,21 @@ namespace MovieStore.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("DirectorId1");
+                    b.HasIndex("DirectorId");
 
                     b.ToTable("Movies");
                 });
 
             modelBuilder.Entity("MovieStore.Models.Order", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
-
-                    b.Property<long>("CustomerId1")
-                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("InsertedDate")
                         .HasColumnType("datetime2");
@@ -215,9 +210,6 @@ namespace MovieStore.Migrations
 
                     b.Property<int>("MovieId")
                         .HasColumnType("int");
-
-                    b.Property<long>("MovieId1")
-                        .HasColumnType("bigint");
 
                     b.Property<decimal>("PriceAtPurchase")
                         .HasColumnType("decimal(18,2)");
@@ -230,37 +222,33 @@ namespace MovieStore.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId1");
+                    b.HasIndex("CustomerId");
 
-                    b.HasIndex("MovieId1");
+                    b.HasIndex("MovieId");
 
                     b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("ActorMovie", b =>
                 {
-                    b.HasOne("MovieStore.Models.Movie", null)
-                        .WithMany()
-                        .HasForeignKey("ActedMoviesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("MovieStore.Models.Actor", null)
                         .WithMany()
                         .HasForeignKey("ActorsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MovieStore.Models.Movie", null)
+                        .WithMany()
+                        .HasForeignKey("MoviesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("MovieStore.Models.Movie", b =>
                 {
-                    b.HasOne("MovieStore.Models.Customer", null)
-                        .WithMany("PurchasedMovies")
-                        .HasForeignKey("CustomerId");
-
                     b.HasOne("MovieStore.Models.Director", "Director")
-                        .WithMany("DirectedMovies")
-                        .HasForeignKey("DirectorId1")
+                        .WithMany("Movies")
+                        .HasForeignKey("DirectorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -271,13 +259,13 @@ namespace MovieStore.Migrations
                 {
                     b.HasOne("MovieStore.Models.Customer", "Customer")
                         .WithMany("Orders")
-                        .HasForeignKey("CustomerId1")
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MovieStore.Models.Movie", "Movie")
-                        .WithMany()
-                        .HasForeignKey("MovieId1")
+                        .WithMany("Orders")
+                        .HasForeignKey("MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -289,13 +277,16 @@ namespace MovieStore.Migrations
             modelBuilder.Entity("MovieStore.Models.Customer", b =>
                 {
                     b.Navigation("Orders");
-
-                    b.Navigation("PurchasedMovies");
                 });
 
             modelBuilder.Entity("MovieStore.Models.Director", b =>
                 {
-                    b.Navigation("DirectedMovies");
+                    b.Navigation("Movies");
+                });
+
+            modelBuilder.Entity("MovieStore.Models.Movie", b =>
+                {
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }
